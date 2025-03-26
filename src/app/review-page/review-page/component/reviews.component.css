@@ -1,0 +1,86 @@
+h2 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Общие стили для формы */
+.review-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для контейнера каждого поля */
+.form-group {
+  margin-bottom: 15px;
+}
+
+/* Стили для текста и текста с ошибками */
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+input.form-control, textarea.form-control {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+textarea.form-control {
+  resize: vertical;
+}
+
+input.form-control:focus, textarea.form-control:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Стили для ошибок */
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* Стили для кнопки */
+button.btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  display: block; 
+  margin: 20px auto 0;
+}
+
+button.btn[disabled] {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+button.btn:hover {
+  background-color: #0056b3;
+}
+
+/* Для загрузки файлов */
+input.form-control-file {
+  padding: 5px;
+}
+
+/* Общие стили для маленьких экранов */
+@media (max-width: 600px) {
+  .review-form {
+    padding: 15px;
+  }
+}
