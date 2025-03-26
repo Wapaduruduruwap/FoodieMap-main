@@ -1,0 +1,51 @@
+<h2>Оставить отзыв</h2>
+<form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="review-form">
+  <!-- Название заведения -->
+  <div class="form-group">
+    <label for="restaurantName">Название заведения:</label>
+    <input type="text" formControlName="restaurantName" id="restaurantName" name="restaurantName" class="form-control" />
+    <div *ngIf="reviewForm.controls['restaurantName'].invalid && reviewForm.controls['restaurantName'].touched" class="error-message">
+      Название заведения обязательно.
+    </div>
+  </div>
+
+  <!-- Оценка -->
+  <div class="form-group">
+    <label for="rating">Оцените заведение:</label>
+    <input type="number" formControlName="rating" min="1" max="5" class="form-control" />
+    <div *ngIf="reviewForm.controls['rating'].invalid && reviewForm.controls['rating'].touched" class="error-message">
+      <div *ngIf="reviewForm.controls['rating'].hasError('required')">
+        Рейтинг обязателен.
+      </div>
+      <div *ngIf="reviewForm.controls['rating'].hasError('min')">
+        Рейтинг не может быть меньше 1.
+      </div>
+      <div *ngIf="reviewForm.controls['rating'].hasError('max')">
+        Рейтинг не может быть больше 5.
+      </div>
+    </div>
+  </div>
+
+  <!-- Отзыв -->
+  <div class="form-group">
+    <label for="text">Оставьте свой отзыв:</label>
+    <textarea formControlName="text" class="form-control" rows="4"></textarea>
+    <div *ngIf="reviewForm.controls['text'].invalid && reviewForm.controls['text'].touched" class="error-message">
+      <div *ngIf="reviewForm.controls['text'].hasError('required')">
+        Отзыв обязателен.
+      </div>
+      <div *ngIf="reviewForm.controls['text'].hasError('minlength')">
+        Отзыв должен содержать минимум 10 символов.
+      </div>
+    </div>
+  </div>
+
+  <!-- Загрузка фото -->
+  <div class="form-group">
+    <label for="images">Загрузить фото:</label>
+    <input type="file" (change)="onFileChange($event)" multiple class="form-control-file" />
+  </div>
+
+  <!-- Кнопка отправки -->
+  <button type="submit" [disabled]="reviewForm.invalid" class="btn btn-primary">Отправить</button>
+</form>
