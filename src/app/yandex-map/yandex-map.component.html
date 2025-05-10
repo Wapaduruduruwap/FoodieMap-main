@@ -1,0 +1,68 @@
+<div class="controls-container">
+  <div class="search-container">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Поиск ресторанов..."
+      (input)="applyFilters()"
+      class="search-input"
+    />
+  </div>
+
+  <div class="filter-container">
+    <div class="filter-group">
+      <label>Рейтинг:</label>
+      <select [(ngModel)]="minRating" (change)="applyFilters()" class="filter-select">
+        <option [ngValue]="undefined">Любой</option>
+        <option [ngValue]="3">3+</option>
+        <option [ngValue]="4">4+</option>
+        <option [ngValue]="4.5">4.5+</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Тип заведения:</label>
+      <select [(ngModel)]="selectedEstablishmentType" (change)="applyFilters()" class="filter-select">
+        <option [ngValue]="undefined">Все</option>
+        <option *ngFor="let type of establishmentTypes" [ngValue]="type">{{ type }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Тип кухни:</label>
+      <select [(ngModel)]="selectedCuisine" (change)="applyFilters()" class="filter-select">
+        <option [ngValue]="undefined">Все</option>
+        <option *ngFor="let cuisine of cuisineTypes" [ngValue]="cuisine">{{ cuisine }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group" *ngIf="userLocation">
+      <label>Расстояние:</label>
+      <select [(ngModel)]="maxDistance" (change)="applyFilters()" class="filter-select">
+        <option [ngValue]="undefined">Любое</option>
+        <option [ngValue]="1">До 1 км</option>
+        <option [ngValue]="2">До 2 км</option>
+        <option [ngValue]="5">До 5 км</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="top-restaurants">
+  <h3>Топ популярных заведений</h3>
+  <div class="restaurant-list">
+    <div *ngFor="let restaurant of topRestaurants" class="restaurant-card" (click)="centerOnRestaurant(restaurant)">
+      <div class="restaurant-name">{{ restaurant.name }}</div>
+      <div class="restaurant-rating">⭐ {{ restaurant.rating }}</div>
+      <div class="restaurant-type">{{ restaurant.establishmentType }}</div>
+      <div class="restaurant-cuisine">{{ restaurant.cuisineType.join(', ') }}</div>
+    </div>
+  </div>
+</div>
+
+<div id="yandex-map" class="yandex-map"></div>
+
+<div *ngIf="isLoading" class="loading-indicator">
+  <div class="spinner"></div>
+  <div class="loading-text">Загрузка ресторанов...</div>
+</div>
