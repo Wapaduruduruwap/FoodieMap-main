@@ -1,7 +1,231 @@
 <div class="app-header">
   <div class="container">
-    <h1 class="app-title">{{title}}</h1>
-    <p class="app-subtitle">Найдите лучшие рестораны и кафе в вашем городе</p>
+    <div class="header-content">
+      <div class="dropdown">
+        <button class="dropdown-btn">☰</button>
+        <div class="dropdown-content">
+          <a (click)="toggleReviewWindow()">Оставить отзыв</a>
+          <a (click)="toggleAddRestaurantWindow()">Добавить заведение</a>
+        </div>
+      </div>
+      <div class="title-container">
+        <h1 class="app-title">{{title}}</h1>
+        <p class="app-subtitle">Найдите лучшие рестораны и кафе в вашем городе</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно для отзывов -->
+<div class="modal-overlay" *ngIf="showReviewWindow">
+  <div class="modal-window">
+    <div class="modal-header">
+      <h2>Оставить отзыв</h2>
+      <button type="button" class="close-button" (click)="toggleReviewWindow()">×</button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="review-form">
+        <!-- Название заведения -->
+        <div class="form-group">
+          <label for="restaurantName">Название заведения:</label>
+          <input type="text" formControlName="restaurantName" id="restaurantName" name="restaurantName" class="form-control" />
+          <div *ngIf="reviewForm.controls['restaurantName'].invalid && reviewForm.controls['restaurantName'].touched" class="error-message">
+            Название заведения обязательно.
+          </div>
+        </div>
+
+        <!-- Оценка -->
+        <div class="form-group">
+          <label for="rating">Оцените заведение:</label>
+          <input type="number" formControlName="rating" min="1" max="5" class="form-control" />
+          <div *ngIf="reviewForm.controls['rating'].invalid && reviewForm.controls['rating'].touched" class="error-message">
+            <div *ngIf="reviewForm.controls['rating'].hasError('required')">
+              Рейтинг обязателен.
+            </div>
+            <div *ngIf="reviewForm.controls['rating'].hasError('min')">
+              Рейтинг не может быть меньше 1.
+            </div>
+            <div *ngIf="reviewForm.controls['rating'].hasError('max')">
+              Рейтинг не может быть больше 5.
+            </div>
+          </div>
+        </div>
+
+        <!-- Отзыв -->
+        <div class="form-group">
+          <label for="text">Оставьте свой отзыв:</label>
+          <textarea formControlName="text" class="form-control" rows="4"></textarea>
+          <div *ngIf="reviewForm.controls['text'].invalid && reviewForm.controls['text'].touched" class="error-message">
+            <div *ngIf="reviewForm.controls['text'].hasError('required')">
+              Отзыв обязателен.
+            </div>
+            <div *ngIf="reviewForm.controls['text'].hasError('minlength')">
+              Отзыв должен содержать минимум 10 символов.
+            </div>
+          </div>
+        </div>
+
+        <!-- Загрузка фото -->
+        <div class="form-group">
+          <label for="images">Загрузить фото:</label>
+          <input type="file" (change)="onFileChange($event)" multiple class="form-control-file" />
+        </div>
+
+        <!-- Кнопка отправки -->
+        <button type="submit" [disabled]="reviewForm.invalid" class="btn btn-primary">Отправить</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно для добавления заведения -->
+<div class="modal-overlay" *ngIf="showAddRestaurantWindow">
+  <div class="modal-window modal-window-large">
+    <div class="modal-header">
+      <h2>Добавление нового заведения</h2>
+      <button type="button" class="close-button" (click)="toggleAddRestaurantWindow()">×</button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="submitRestaurantSuccess" class="success-message">
+        Заведение успешно добавлено!
+      </div>
+
+      <div *ngIf="submitRestaurantError" class="error-message">
+        {{ submitRestaurantError }}
+      </div>
+
+      <form [formGroup]="restaurantForm" (ngSubmit)="submitRestaurant()" class="restaurant-form">
+        <!-- Название заведения -->
+        <div class="form-group">
+          <label for="name">Название заведения:</label>
+          <input type="text" formControlName="name" id="name" class="form-control" />
+          <div *ngIf="hasRestaurantError('name', 'required')" class="error-message">
+            Название заведения обязательно.
+          </div>
+          <div *ngIf="hasRestaurantError('name', 'minlength')" class="error-message">
+            Название должно содержать минимум 3 символа.
+          </div>
+        </div>
+
+        <!-- Адрес и координаты -->
+        <div class="form-group">
+          <label for="address">Адрес:</label>
+          <div class="address-input-group">
+            <input type="text" formControlName="address" id="address" class="form-control" />
+            <button type="button" (click)="searchAddress()" class="btn btn-secondary">Найти координаты</button>
+          </div>
+          <div *ngIf="hasRestaurantError('address', 'required')" class="error-message">
+            Адрес обязателен.
+          </div>
+          <div *ngIf="hasRestaurantError('address', 'minlength')" class="error-message">
+            Адрес должен содержать минимум 5 символов.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Координаты:</label>
+          <div class="coordinates-display">
+            {{ restaurantForm.get('coordinates')?.value ? restaurantForm.get('coordinates')?.value.join(', ') : 'Не определены' }}
+          </div>
+          <div *ngIf="hasRestaurantError('coordinates', 'required')" class="error-message">
+            Координаты обязательны. Используйте кнопку "Найти координаты".
+          </div>
+        </div>
+
+        <!-- Тип заведения -->
+        <div class="form-group">
+          <label for="establishmentType">Тип заведения:</label>
+          <select formControlName="establishmentType" id="establishmentType" class="form-control">
+            <option value="">Выберите тип заведения</option>
+            <option *ngFor="let type of establishmentTypes" [value]="type">{{ type }}</option>
+          </select>
+          <div *ngIf="hasRestaurantError('establishmentType', 'required')" class="error-message">
+            Тип заведения обязателен.
+          </div>
+        </div>
+
+        <!-- Тип кухни -->
+        <div class="form-group">
+          <label for="cuisineType">Тип кухни:</label>
+          <select multiple formControlName="cuisineType" id="cuisineType" class="form-control">
+            <option *ngFor="let cuisine of cuisineTypes" [value]="cuisine">{{ cuisine }}</option>
+          </select>
+          <div *ngIf="hasRestaurantError('cuisineType', 'required')" class="error-message">
+            Выберите хотя бы один тип кухни.
+          </div>
+          <small class="form-text text-muted">Удерживайте Ctrl для выбора нескольких типов кухни.</small>
+        </div>
+
+        <!-- Рейтинг -->
+        <div class="form-group">
+          <label for="restaurantRating">Рейтинг:</label>
+          <input type="number" formControlName="rating" id="restaurantRating" min="1" max="5" step="0.1" class="form-control" />
+          <div *ngIf="hasRestaurantError('rating', 'required')" class="error-message">
+            Рейтинг обязателен.
+          </div>
+          <div *ngIf="hasRestaurantError('rating', 'min') || hasRestaurantError('rating', 'max')" class="error-message">
+            Рейтинг должен быть от 1 до 5.
+          </div>
+        </div>
+
+        <!-- Ценовой диапазон -->
+        <div class="form-group">
+          <label for="priceRange">Ценовой диапазон:</label>
+          <select formControlName="priceRange" id="priceRange" class="form-control">
+            <option value="$">$ (Бюджетно)</option>
+            <option value="$$">$$ (Средне)</option>
+            <option value="$$$">$$$ (Дорого)</option>
+            <option value="$$$$">$$$$ (Очень дорого)</option>
+          </select>
+        </div>
+
+        <!-- Время работы -->
+        <div class="form-group">
+          <label for="openingHours">Время работы:</label>
+          <input type="text" formControlName="openingHours" id="openingHours" class="form-control" placeholder="Например: 10:00-22:00" />
+          <div *ngIf="hasRestaurantError('openingHours', 'required')" class="error-message">
+            Время работы обязательно.
+          </div>
+        </div>
+
+        <!-- Описание -->
+        <div class="form-group">
+          <label for="description">Описание:</label>
+          <textarea formControlName="description" id="description" rows="4" class="form-control"></textarea>
+          <div *ngIf="hasRestaurantError('description', 'required')" class="error-message">
+            Описание обязательно.
+          </div>
+          <div *ngIf="hasRestaurantError('description', 'minlength')" class="error-message">
+            Описание должно содержать минимум 10 символов.
+          </div>
+        </div>
+
+        <!-- Загрузка фотографий -->
+        <div class="form-group">
+          <label for="photos">Фотографии:</label>
+          <input type="file" id="photos" (change)="onRestaurantFileSelected($event)" multiple accept="image/*" class="form-control-file" />
+          <small class="form-text text-muted">Вы можете выбрать несколько фотографий.</small>
+        </div>
+
+        <!-- Предпросмотр фотографий -->
+        <div *ngIf="restaurantPreviewUrls.length > 0" class="photo-previews">
+          <h4>Предпросмотр фотографий:</h4>
+          <div class="preview-container">
+            <div *ngFor="let url of restaurantPreviewUrls" class="preview-item">
+              <img [src]="url" alt="Preview" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Кнопка отправки -->
+        <div class="form-actions">
+          <button type="submit" [disabled]="restaurantForm.invalid || isRestaurantSubmitting" class="btn btn-primary">
+            <span *ngIf="isRestaurantSubmitting">Отправка...</span>
+            <span *ngIf="!isRestaurantSubmitting">Добавить заведение</span>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
