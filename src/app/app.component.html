@@ -4,6 +4,13 @@
       <div class="dropdown">
         <button class="dropdown-btn">☰</button>
         <div class="dropdown-content">
+          <!-- Страницы -->
+          <a routerLink="/">Главная (Карта)</a>
+          <a routerLink="/profile">Профиль</a>
+          <a routerLink="/reviews">Отзывы</a>
+          <a routerLink="/add-restaurant">Добавить заведение</a>
+
+          <!-- Модальные окна -->
           <a (click)="toggleReviewWindow()">Оставить отзыв</a>
           <a (click)="toggleAddRestaurantWindow()">Добавить заведение</a>
         </div>
@@ -15,6 +22,8 @@
     </div>
   </div>
 </div>
+
+<router-outlet></router-outlet>
 
 <!-- Модальное окно для отзывов -->
 <div class="modal-overlay" *ngIf="showReviewWindow">
@@ -229,13 +238,13 @@
   </div>
 </div>
 
-<div class="container">
+<!-- <div class="container">
   <div class="map-container">
     <app-yandex-map />
   </div>
 
   <router-outlet />
-</div>
+</div> -->
 
 <footer class="app-footer">
   <div class="container">
