@@ -28,6 +28,7 @@
     <mat-list-item *ngFor="let place of visitedRestaurants">
       <mat-icon matListIcon>restaurant</mat-icon>
       <p matLine>{{ place }}</p>
+      <!-- <p matLine class="visit-date">{{ getVisitDate(place) | date:'mediumDate' }}</p> -->
     </mat-list-item>
   </mat-list>
 </mat-card>

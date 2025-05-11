@@ -3,8 +3,10 @@ import { RestaurantService } from '../services/restaurant.service';
 import { Restaurant, FilterOptions } from '../models/restaurant.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { VisitService } from '../services/visit.service';
 
 declare const ymaps: any;
+
 
 @Component({
   selector: 'app-yandex-map',
@@ -32,7 +34,11 @@ export class YandexMapComponent implements OnInit, AfterViewInit {
   selectedEstablishmentType: string | undefined;
   maxDistance: number | undefined;
 
-  constructor(private restaurantService: RestaurantService) {}
+
+  constructor(
+  private restaurantService: RestaurantService,
+  private visitService: VisitService
+  ) {}
 
   ngOnInit(): void {
     this.loadCuisineTypes();
@@ -242,29 +248,35 @@ export class YandexMapComponent implements OnInit, AfterViewInit {
 
     // Create placemarks for each restaurant
     this.restaurantPlacemarks = restaurants.map(restaurant => {
-      const placemark = new ymaps.Placemark(
-        restaurant.coordinates,
-        {
-          balloonContentHeader: restaurant.name,
-          balloonContentBody: `
-            <div><strong>Рейтинг:</strong> ${restaurant.rating} ⭐</div>
-            <div><strong>Тип заведения:</strong> ${restaurant.establishmentType}</div>
-            <div><strong>Кухня:</strong> ${restaurant.cuisineType.join(', ')}</div>
-            <div><strong>Ценовая категория:</strong> ${restaurant.priceRange}</div>
-            <div><strong>Время работы:</strong> ${restaurant.openingHours}</div>
-            <div><strong>Адрес:</strong> ${restaurant.address}</div>
-            <div>${restaurant.description}</div>
-          `,
-          balloonContentFooter: restaurant.distance ? `Расстояние: ${restaurant.distance} км` : '',
-          hintContent: `${restaurant.name} (${restaurant.rating} ⭐)`
-        },
-        {
-          preset: 'islands#redFoodIcon'
-        }
-      );
+    const placemark = new ymaps.Placemark(
+      restaurant.coordinates,
+      {
+        balloonContentHeader: restaurant.name,
+        balloonContentBody: `
+          <div><strong>Рейтинг:</strong> ${restaurant.rating} ⭐</div>
+          <div><strong>Тип заведения:</strong> ${restaurant.establishmentType}</div>
+          <div><strong>Кухня:</strong> ${restaurant.cuisineType.join(', ')}</div>
+          <div><strong>Ценовая категория:</strong> ${restaurant.priceRange}</div>
+          <div><strong>Время работы:</strong> ${restaurant.openingHours}</div>
+          <div><strong>Адрес:</strong> ${restaurant.address}</div>
+          <div>${restaurant.description}</div>
+          <button class="visit-button" data-restaurant="${restaurant.name}">Отметить посещение</button>
+        `,
+        balloonContentFooter: restaurant.distance ? `Расстояние: ${restaurant.distance} км` : '',
+        hintContent: `${restaurant.name} (${restaurant.rating} ⭐)`
+      },
+      {
+        preset: 'islands#redFoodIcon'
+      }
+    );
+
+    // Обработчик клика на метку
+    placemark.events.add('click', () => {
+      this.visitService.addVisit(restaurant.name);
+    });
 
       return placemark;
-    });
+    }); 
 
     // Add placemarks to clusterer and clusterer to map
     clusterer.add(this.restaurantPlacemarks);

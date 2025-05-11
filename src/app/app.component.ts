@@ -2,18 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReviewPageRoutingModule } from './review-page/review-page-routing.module';
-import { YandexMapComponent } from './yandex-map/yandex-map.component';
+// import { YandexMapComponent } from './yandex-map/yandex-map.component';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { RestaurantService } from './services/restaurant.service';
 import { Restaurant } from './models/restaurant.model';
+
 
 declare const ymaps: any;
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, YandexMapComponent, ReactiveFormsModule, ReviewPageRoutingModule, CommonModule, RouterModule],
+  imports: [RouterOutlet, ReactiveFormsModule, ReviewPageRoutingModule, CommonModule, RouterModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })

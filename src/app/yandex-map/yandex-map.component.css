@@ -1,3 +1,22 @@
+.visit-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 10px 0 0 0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.visit-button:hover {
+  background-color: #45a049;
+}
+
+/* ----- */
 .yandex-map {
   width: 100%;
   height: 70vh;

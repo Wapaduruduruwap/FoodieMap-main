@@ -52,6 +52,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { VisitService } from '../services/visit.service';
 
 @Component({
   selector: 'app-profile',
@@ -65,7 +66,9 @@ export class ProfileComponent implements OnInit {
   isEditing = false;
   visitedRestaurants: string[] = [];
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private visitService: VisitService) {
     this.profileForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -94,13 +97,17 @@ export class ProfileComponent implements OnInit {
   }
 
   private loadVisitHistory(): void {
-    const history = localStorage.getItem('visitHistory');
-    this.visitedRestaurants = history ? JSON.parse(history) : [
-      'Pasta House',
-      'Sushi Bar Kyoto',
-      'Burger King',
-      'Taco Fiesta'
-    ];
+    this.visitedRestaurants = this.visitService.getVisits();
+    
+    // Если посещений нет, используем демо-данные
+    if (this.visitedRestaurants.length === 0) {
+      this.visitedRestaurants = [
+        'Pasta House',
+        'Sushi Bar Kyoto',
+        'Burger King',
+        'Taco Fiesta'
+      ];
+    }
   }
 
   toggleEdit(): void {
