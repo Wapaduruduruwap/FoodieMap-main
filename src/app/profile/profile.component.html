@@ -1,0 +1,33 @@
+<mat-card>
+  <h2>Профиль пользователя</h2>
+
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <div class="avatar-section">
+      <img *ngIf="avatarPreview" [src]="avatarPreview" alt="Avatar" class="avatar-preview" />
+      <input type="file" (change)="onFileSelected($event)" [disabled]="!isEditing" />
+    </div>
+
+    <mat-form-field class="full-width">
+      <mat-label>Имя</mat-label>
+      <input matInput formControlName="name" [readonly]="!isEditing" />
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" [readonly]="!isEditing" />
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" *ngIf="isEditing">Сохранить</button>
+    <button mat-stroked-button type="button" (click)="toggleEdit()" *ngIf="!isEditing">Редактировать</button>
+  </form>
+</mat-card>
+
+<mat-card>
+  <h3>История посещений</h3>
+  <mat-list>
+    <mat-list-item *ngFor="let place of visitedRestaurants">
+      <mat-icon matListIcon>restaurant</mat-icon>
+      <p matLine>{{ place }}</p>
+    </mat-list-item>
+  </mat-list>
+</mat-card>
