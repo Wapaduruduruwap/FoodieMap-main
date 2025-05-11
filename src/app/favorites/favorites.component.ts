@@ -48,7 +48,7 @@ export class FavoritesComponent implements OnInit {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           this.userLocation = [position.coords.latitude, position.coords.longitude];
-        //   this.calculateDistances();
+          this.calculateDistances();
           this.applyFilters();
         },
         (error) => {
@@ -58,17 +58,17 @@ export class FavoritesComponent implements OnInit {
     }
   }
 
-//   private calculateDistances(): void {
-//     if (this.userLocation) {
-//       this.favoriteRestaurants.forEach(restaurant => {
-//         restaurant.distance = this.restaurantService.getDistance(
-//           this.userLocation![0], this.userLocation![1],
-//           restaurant.coordinates[0], restaurant.coordinates[1]
-//         );
-//       });
-//       this.sortRestaurants();
-//     }
-//   }
+  private calculateDistances(): void {
+    if (this.userLocation) {
+      this.favoriteRestaurants.forEach(restaurant => {
+        restaurant.distance = this.restaurantService.getDistance(
+          this.userLocation![0], this.userLocation![1],
+          restaurant.coordinates[0], restaurant.coordinates[1]
+        );
+      });
+      this.sortRestaurants();
+    }
+  }
 
   removeFromFavorites(restaurantId: number): void {
     this.favoriteRestaurants = this.favoriteRestaurants.filter(r => r.id !== restaurantId);
