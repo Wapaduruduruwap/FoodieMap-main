@@ -24,11 +24,18 @@
 
 <mat-card>
   <h3>История посещений</h3>
+  <button mat-raised-button 
+          color="warn" 
+          (click)="clearHistory()"
+          *ngIf="visitedRestaurants.length > 0">
+    <mat-icon>delete</mat-icon>
+    Очистить историю
+  </button>
+
   <mat-list>
     <mat-list-item *ngFor="let place of visitedRestaurants">
       <mat-icon matListIcon>restaurant</mat-icon>
       <p matLine>{{ place }}</p>
-      <!-- <p matLine class="visit-date">{{ getVisitDate(place) | date:'mediumDate' }}</p> -->
     </mat-list-item>
   </mat-list>
 </mat-card>

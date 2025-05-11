@@ -53,6 +53,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { VisitService } from '../services/visit.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-profile',
@@ -64,18 +68,22 @@ export class ProfileComponent implements OnInit {
   profileForm: FormGroup;
   avatarPreview: string | ArrayBuffer | null = null;
   isEditing = false;
-  visitedRestaurants: string[] = [];
+  // visitedRestaurants: string[] = [];
+  visitedRestaurants: string[] = []; // Используем массив строк
+  // visitedRestaurants$: Observable<string[]>;
 
   constructor(
     private fb: FormBuilder,
-    private visitService: VisitService) {
+    private visitService: VisitService,
+    private snackBar: MatSnackBar) {
     this.profileForm = this.fb.group({
+      // this.loadVisitHistory();
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      avatar: [null]
+      avatar: [null],
     });
   }
-
+  
   ngOnInit(): void {
     this.loadProfileData();
     this.loadVisitHistory();
@@ -97,16 +105,39 @@ export class ProfileComponent implements OnInit {
   }
 
   private loadVisitHistory(): void {
-    this.visitedRestaurants = this.visitService.getVisits();
-    
-    // Если посещений нет, используем демо-данные
-    if (this.visitedRestaurants.length === 0) {
-      this.visitedRestaurants = [
-        'Pasta House',
-        'Sushi Bar Kyoto',
-        'Burger King',
-        'Taco Fiesta'
-      ];
+    // Загружаем данные через сервис
+    this.visitService.getVisits().pipe(
+      map(visits => visits.map(v => v.restaurantName))
+    ).subscribe(restaurants => {
+      this.visitedRestaurants = restaurants;
+      
+      // Если нет посещений, используем демо-данные
+      // if (this.visitedRestaurants.length === 0) {
+      //   this.visitedRestaurants = [
+      //     'Pasta House',
+      //     'Sushi Bar Kyoto',
+      //     'Burger King',
+      //     'Taco Fiesta'
+      //   ];
+      // }
+    });
+  }
+  
+  clearHistory(): void {
+    if (confirm('Вы уверены, что хотите очистить историю посещений?')) {
+      this.visitService.clearVisits().subscribe({
+        next: () => {
+          this.visitedRestaurants = [];
+          this.snackBar.open('История посещений очищена', 'Закрыть', {
+            duration: 3000
+          });
+        },
+        error: () => {
+          this.snackBar.open('Ошибка при очистке истории', 'Закрыть', {
+            duration: 3000
+          });
+        }
+      });
     }
   }
 
