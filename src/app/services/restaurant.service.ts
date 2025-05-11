@@ -387,6 +387,28 @@ export class RestaurantService {
     return of(sortedRestaurants);
   }
 
+  addToFavorites(restaurant: Restaurant): void {
+    const favorites = this.getFavorites();
+    if (!favorites.some(f => f.id === restaurant.id)) {
+      favorites.push(restaurant);
+      localStorage.setItem('favoriteRestaurants', JSON.stringify(favorites));
+    }
+  }
+
+  removeFromFavorites(restaurantId: number): void {
+    const favorites = this.getFavorites().filter(f => f.id !== restaurantId);
+    localStorage.setItem('favoriteRestaurants', JSON.stringify(favorites));
+  }
+
+  getFavorites(): Restaurant[] {
+    const favorites = localStorage.getItem('favoriteRestaurants');
+    return favorites ? JSON.parse(favorites) : [];
+  }
+
+  isFavorite(restaurantId: number): boolean {
+    return this.getFavorites().some(f => f.id === restaurantId);
+  }
+
   // Фильтрация ресторанов на основе критериев
   filterRestaurants(options: FilterOptions): Observable<Restaurant[]> {
     let filteredRestaurants = [...this.restaurants];

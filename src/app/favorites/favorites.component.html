@@ -1,0 +1,88 @@
+<div class="favorites-container">
+  <h1>Избранные места</h1>
+  
+  <div class="controls-container">
+    <div class="sort-controls">
+      <label>Сортировать по:</label>
+      <button 
+        [class.active]="sortBy === 'rating'" 
+        (click)="onSortChange('rating')"
+      >
+        Рейтингу
+      </button>
+      <button 
+        [class.active]="sortBy === 'dateAdded'" 
+        (click)="onSortChange('dateAdded')"
+      >
+        Дате добавления
+      </button>
+    </div>
+
+    <div class="filter-controls">
+      <div class="filter-group">
+        <label>Фильтры:</label>
+        
+        <div class="distance-filter" *ngIf="userLocation">
+          <label>Расстояние:</label>
+          <select [(ngModel)]="maxDistance" (change)="onDistanceChange(maxDistance)">
+            <option [ngValue]="undefined">Любое</option>
+            <option [ngValue]="1">До 1 км</option>
+            <option [ngValue]="2">До 2 км</option>
+            <option [ngValue]="5">До 5 км</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cuisine-filters">
+        <h3>Тип кухни:</h3>
+        <div class="cuisine-checkboxes">
+          <label *ngFor="let cuisine of cuisineTypes">
+            <input 
+              type="checkbox" 
+              [value]="cuisine" 
+              (change)="toggleCuisineFilter(cuisine)"
+              [checked]="selectedCuisines.includes(cuisine)"
+            >
+            {{ cuisine }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <div class="spinner"></div>
+    <div>Загрузка избранных мест...</div>
+  </div>
+
+  <div *ngIf="!isLoading && filteredRestaurants.length === 0" class="no-results">
+    Нет избранных мест, соответствующих выбранным фильтрам
+  </div>
+
+  <div class="favorites-list">
+    <div *ngFor="let restaurant of filteredRestaurants" class="restaurant-card">
+      <div class="restaurant-header">
+        <h3>{{ restaurant.name }}</h3>
+        <button 
+          class="remove-button" 
+          (click)="removeFromFavorites(restaurant.id)"
+        >
+          Удалить
+        </button>
+      </div>
+      
+      <div class="restaurant-details">
+        <div class="restaurant-rating">⭐ {{ restaurant.rating }}</div>
+        <div class="restaurant-type">{{ restaurant.establishmentType }}</div>
+        <div class="restaurant-cuisine">{{ restaurant.cuisineType.join(', ') }}</div>
+        
+        <div *ngIf="restaurant.distance !== undefined" class="restaurant-distance">
+          {{ restaurant.distance }} км от вас
+        </div>
+        
+        <div class="restaurant-address">{{ restaurant.address }}</div>
+        <div class="restaurant-hours">{{ restaurant.openingHours }}</div>
+      </div>
+    </div>
+  </div>
+</div>

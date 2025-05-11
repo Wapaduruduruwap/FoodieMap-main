@@ -52,11 +52,18 @@
   <h3>Топ популярных заведений</h3>
   <div class="restaurant-list">
     <div *ngFor="let restaurant of topRestaurants" class="restaurant-card" (click)="centerOnRestaurant(restaurant)">
-      <div class="restaurant-name">{{ restaurant.name }}</div>
-      <div class="restaurant-rating">⭐ {{ restaurant.rating }}</div>
-      <div class="restaurant-type">{{ restaurant.establishmentType }}</div>
-      <div class="restaurant-cuisine">{{ restaurant.cuisineType.join(', ') }}</div>
-    </div>
+    <div class="restaurant-name">{{ restaurant.name }}</div>
+    <div class="restaurant-rating">⭐ {{ restaurant.rating }}</div>
+    <div class="restaurant-type">{{ restaurant.establishmentType }}</div>
+    <div class="restaurant-cuisine">{{ restaurant.cuisineType.join(', ') }}</div>
+    <button 
+      class="favorite-button"
+      (click)="toggleFavorite(restaurant); $event.stopPropagation()"
+      [class.favorited]="isFavorite(restaurant.id)"
+    >
+      {{ isFavorite(restaurant.id) ? '★' : '☆' }}
+    </button>
+  </div>
   </div>
 </div>
 

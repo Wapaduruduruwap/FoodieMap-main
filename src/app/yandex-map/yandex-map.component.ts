@@ -45,6 +45,18 @@ export class YandexMapComponent implements OnInit, AfterViewInit {
     this.loadEstablishmentTypes();
   }
 
+  isFavorite(restaurantId: number): boolean {
+    return this.restaurantService.isFavorite(restaurantId);
+  }
+
+  toggleFavorite(restaurant: Restaurant): void {
+    if (this.isFavorite(restaurant.id)) {
+      this.restaurantService.removeFromFavorites(restaurant.id);
+    } else {
+      this.restaurantService.addToFavorites(restaurant);
+    }
+  }
+
   ngAfterViewInit(): void {
     console.log('ngAfterViewInit called, waiting for ymaps to be ready...');
 
@@ -52,6 +64,8 @@ export class YandexMapComponent implements OnInit, AfterViewInit {
       console.error('ymaps is undefined in ngAfterViewInit');
       return;
     }
+
+    
 
     ymaps.ready().then(() => {
       console.log('ymaps is ready, initializing map...');
