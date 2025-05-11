@@ -1,0 +1,17 @@
+<div class="restaurants-list-container">
+  <h1>Все рестораны</h1>
+  
+  <div class="restaurants-grid">
+    <div *ngFor="let restaurant of restaurants" class="restaurant-card" [routerLink]="['/restaurant', restaurant.id]">
+      <img [src]="restaurant.imageUrl || 'assets/default-restaurant.jpg'" 
+           [alt]="restaurant.name" 
+           class="restaurant-image">
+      <div class="restaurant-info">
+        <h3>{{ restaurant.name }}</h3>
+        <div class="rating">⭐ {{ restaurant.rating }}</div>
+        <div class="cuisine">{{ restaurant.cuisineType.join(', ') }}</div>
+        <div class="address">{{ restaurant.address }}</div>
+      </div>
+    </div>
+  </div>
+</div>

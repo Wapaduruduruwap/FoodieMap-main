@@ -118,10 +118,12 @@ export class RestaurantDetailsComponent implements OnInit, AfterViewInit, OnDest
   }
 
   ngAfterViewInit(): void {
+  setTimeout(() => {
     if (this.activeTab === 'map') {
       this.safeInitMap();
     }
-  }
+  }, 300);
+}
 
   
     getFormattedName(name: string): string {
@@ -130,7 +132,13 @@ export class RestaurantDetailsComponent implements OnInit, AfterViewInit, OnDest
 
   private safeInitMap(): void {
     if (!this.restaurant) return;
-
+  
+    const mapElement = document.getElementById('restaurant-map');
+    if (!mapElement) {
+      console.error('Element with id "restaurant-map" not found');
+      return;
+    }
+    
     if (typeof ymaps === 'undefined') {
       console.error('Yandex Maps API is not loaded');
       return;
