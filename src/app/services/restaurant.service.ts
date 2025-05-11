@@ -464,6 +464,16 @@ export class RestaurantService {
     });
   }
 
+  getRestaurantById(id: number): Observable<Restaurant> {
+    if (this.restaurants.length === 0) {
+      this.useSampleData();
+    }
+    const restaurant = this.restaurants.find(r => r.id === id);
+    if (!restaurant) {
+      throw new Error(`Restaurant with id ${id} not found`);
+    }
+    return of(restaurant);
+  }
   // Haversine formula to calculate distance between two points on Earth
   public  getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
     const R = 6371; // Radius of the Earth in km

@@ -3,6 +3,7 @@ import { HomeComponent } from './home/home.component'; // ← Добавь им�
 import { ReviewComponent } from './review-page/review-page/component/reviews.component';
 import { AddRestaurantComponent } from './add-restaurant/add-restaurant.component';
 import { FavoritesComponent } from './favorites/favorites.component';
+import { RestaurantDetailsComponent } from './restaurant-details/restaurant-details.component';
 
 export const routes: Routes = [
   { 
@@ -16,4 +17,5 @@ export const routes: Routes = [
   { path: 'reviews', component: ReviewComponent },
   { path: 'add-restaurant', component: AddRestaurantComponent },
   { path: 'favorites', component: FavoritesComponent },
+  { path: 'restaurant/:id', component: RestaurantDetailsComponent },
 ];

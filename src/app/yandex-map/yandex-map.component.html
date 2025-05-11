@@ -51,7 +51,8 @@
 <div class="top-restaurants">
   <h3>Топ популярных заведений</h3>
   <div class="restaurant-list">
-    <div *ngFor="let restaurant of topRestaurants" class="restaurant-card" (click)="centerOnRestaurant(restaurant)">
+    <!-- <div *ngFor="let restaurant of topRestaurants" class="restaurant-card" (click)="centerOnRestaurant(restaurant)"  -->
+    <div *ngFor="let restaurant of topRestaurants" class="restaurant-card" [routerLink]="['/restaurant', restaurant.id]">>
     <div class="restaurant-name">{{ restaurant.name }}</div>
     <div class="restaurant-rating">⭐ {{ restaurant.rating }}</div>
     <div class="restaurant-type">{{ restaurant.establishmentType }}</div>

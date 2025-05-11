@@ -1,0 +1,151 @@
+<div class="restaurant-details-container">
+  <!-- Индикатор загрузки -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <div class="spinner"></div>
+    <div>Загрузка информации о ресторане...</div>
+  </div>
+
+  <!-- Сообщение об ошибке -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Основной контент -->
+  <div *ngIf="restaurant && !isLoading" class="restaurant-content">
+    <!-- Хлебные крошки -->
+    <nav class="breadcrumbs">
+      <a routerLink="/">Главная</a> &gt; 
+      <span>{{ restaurant.name }}</span>
+    </nav>
+
+    <!-- Заголовок -->
+    <div class="restaurant-header">
+      <h1>{{ restaurant.name }}</h1>
+      <div class="rating-badge">
+        ⭐ {{ restaurant.rating }}
+      </div>
+    </div>
+
+    <!-- Навигация по табам -->
+    <div class="tabs">
+      <button 
+        [class.active]="activeTab === 'info'" 
+        (click)="setActiveTab('info')"
+      >
+        Информация
+      </button>
+      <button 
+        [class.active]="activeTab === 'reviews'" 
+        (click)="setActiveTab('reviews')"
+      >
+        Отзывы ({{ reviews.length }})
+      </button>
+      <button 
+        [class.active]="activeTab === 'map'" 
+        (click)="setActiveTab('map')"
+      >
+        На карте
+      </button>
+    </div>
+
+    <!-- Контент табов -->
+    <div class="tab-content">
+      <!-- Вкладка информации -->
+      <div *ngIf="activeTab === 'info'" class="info-tab">
+        <div class="restaurant-gallery">
+          <img [src]="restaurant.imageUrl || 'assets/default-restaurant.jpg'" 
+               [alt]="restaurant.name" 
+               class="main-image">
+          <div class="thumbnail-container">
+            <img *ngFor="let img of [1,2,3]" 
+                 [src]="restaurant.imageUrl || 'assets/default-restaurant.jpg'" 
+                 alt="Фото ресторана" 
+                 class="thumbnail">
+          </div>
+        </div>
+
+        <div class="restaurant-info">
+          <div class="info-section">
+            <h3>Описание</h3>
+            <p>{{ restaurant.description }}</p>
+          </div>
+
+          <div class="info-section">
+            <h3>Детали</h3>
+            <ul class="details-list">
+              <li><strong>Тип заведения:</strong> {{ restaurant.establishmentType }}</li>
+              <li><strong>Кухня:</strong> {{ restaurant.cuisineType.join(', ') }}</li>
+              <li><strong>Ценовой диапазон:</strong> {{ restaurant.priceRange }}</li>
+              <li><strong>Время работы:</strong> {{ restaurant.openingHours }}</li>
+              <li><strong>Адрес:</strong> {{ restaurant.address }}</li>
+            </ul>
+          </div>
+
+          <div class="info-section">
+            <h3>Контакты</h3>
+            <ul class="contacts-list">
+              <li><strong>Телефон:</strong> +7 (XXX) XXX-XX-XX</li>
+              <!-- <li><strong>Email:</strong> <a [href]="'mailto:info@' + getFormattedName(restaurant.name) + '.com'">info@{{ getFormattedName(restaurant.name) }}.com</a></li> -->
+              <li><strong>Сайт:</strong>
+                <a [href]="'http://www.' + getFormattedName(restaurant.name) + '.com'" target="_blank">
+                    www.{{ getFormattedName(restaurant.name) }}.com
+                </a>
+                </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка отзывов -->
+      <div *ngIf="activeTab === 'reviews'" class="reviews-tab">
+        <div class="add-review-form">
+          <h3>Оставить отзыв</h3>
+          <div class="form-group">
+            <label>Ваше имя:</label>
+            <input type="text" [(ngModel)]="newReview.author" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Оценка:</label>
+            <select [(ngModel)]="newReview.rating" class="form-control">
+              <option *ngFor="let i of [5,4,3,2,1]" [value]="i">
+                {{i}} - {{getRatingDescription(i)}}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Текст отзыва:</label>
+            <textarea [(ngModel)]="newReview.text" class="form-control" rows="4"></textarea>
+          </div>
+          <button (click)="submitReview()" class="submit-button">Отправить отзыв</button>
+        </div>
+
+        <div class="reviews-list">
+          <h3>Отзывы посетителей</h3>
+          <div *ngIf="reviews.length === 0" class="no-reviews">
+            Пока нет отзывов. Будьте первым!
+          </div>
+          <div *ngFor="let review of reviews" class="review-card">
+            <div class="review-header">
+              <div class="review-author">{{ review.author }}</div>
+              <div class="review-rating">⭐ {{ review.rating }}</div>
+              <div class="review-date">{{ review.date | date:'mediumDate' }}</div>
+            </div>
+            <div class="review-text">{{ review.text }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка карты -->
+      <div *ngIf="activeTab === 'map'" class="map-tab">
+        <div class="map-container">
+          <div id="restaurant-map" class="restaurant-map"></div>
+        </div>
+        <div class="map-address">
+          <h3>Как добраться</h3>
+          <p>{{ restaurant.address }}</p>
+          <p>Координаты: {{ restaurant.coordinates[0] | number:'1.4-4' }}, {{ restaurant.coordinates[1] | number:'1.4-4' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

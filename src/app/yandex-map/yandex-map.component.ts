@@ -4,6 +4,7 @@ import { Restaurant, FilterOptions } from '../models/restaurant.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VisitService } from '../services/visit.service';
+import { RouterModule } from '@angular/router';
 
 declare const ymaps: any;
 
@@ -11,7 +12,7 @@ declare const ymaps: any;
 @Component({
   selector: 'app-yandex-map',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule ],
   templateUrl: './yandex-map.component.html',
   styleUrls: ['./yandex-map.component.css']
 })
